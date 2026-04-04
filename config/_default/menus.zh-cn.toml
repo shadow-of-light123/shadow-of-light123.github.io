@@ -16,20 +16,18 @@
   weight = 10
 
 [[main]]
-  name = "Parent"
+  name = "关于"
+  pageRef = "about"
   weight = 20
 
-#[[main]]
-#  name = "example sub-menu 1"
-#  parent = "Parent"
-#  pageRef = "posts"
-#  weight = 20
+[[main]]
+  name = "首页"
+  pageRef = "/"
+  weight = 1
 
-#[[main]]
-#  name = "example sub-menu 2"
-#  parent = "Parent"
-#  pageRef = "posts"
-#  weight = 20
+[[main]]
+  name = "简历"
+  weight = 15
 
 #[[subnavigation]]
 #  name = "An interesting topic"
