@@ -25,10 +25,6 @@
   pageRef = "/"
   weight = 1
 
-[[main]]
-  name = "简历"
-  weight = 15
-
 #[[subnavigation]]
 #  name = "An interesting topic"
 #  pageRef = "tags/interesting-topic"
