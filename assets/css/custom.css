@@ -1,0 +1,27 @@
+/* 自定义样式：此文件会在主题样式之后自动加载，优先级高于默认值 */
+
+/* 卡片悬停动效：上浮 + 阴影 + 主题色描边 */
+.article-link--card,
+.article-link--related {
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.article-link--card:hover,
+.article-link--related:hover {
+  transform: translateY(-4px);
+  border-color: rgba(var(--color-primary-500), 0.6);
+  box-shadow: 0 12px 24px -8px rgba(var(--color-neutral-900), 0.25);
+}
+
+/* 尊重系统的减少动效偏好 */
+@media (prefers-reduced-motion: reduce) {
+  .article-link--card,
+  .article-link--related {
+    transition: none;
+  }
+
+  .article-link--card:hover,
+  .article-link--related:hover {
+    transform: none;
+  }
+}
