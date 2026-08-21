@@ -11,14 +11,19 @@
 # ordered by weight from lowest to highest.
 
 [[main]]
-  name = "博客"
-  pageRef = "posts"
+  name = "八股"
+  pageRef = "bagu"
   weight = 10
+
+[[main]]
+  name = "随笔"
+  pageRef = "essays"
+  weight = 20
 
 [[main]]
   name = "关于"
   pageRef = "about"
-  weight = 20
+  weight = 30
 
 [[main]]
   name = "首页"

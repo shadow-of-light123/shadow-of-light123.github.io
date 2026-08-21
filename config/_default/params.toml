@@ -17,7 +17,7 @@ enableStructuredBreadcrumbs = false
 
 replyByEmail = false
 
-# mainSections = ["section1", "section2"]
+mainSections = ["bagu", "essays"]
 # robots = ""
 
 disableImageOptimization = false
@@ -55,8 +55,8 @@ forgejoDefaultServer = "https://v11.next.forgejo.org"
   homepageImage = "img/background-optimized.webp" # used in: hero, and card
   showRecent = true
   showRecentItems = 5
-  showMoreLink = true
-  showMoreLinkDest = "/posts/"
+  showMoreLink = false # 文章已按「八股 / 随笔」分栏，导航栏直接进入，不再需要单一的全部文章页
+  showMoreLinkDest = "/essays/"
   cardView = true
   cardViewScreenWidth = false
   layoutBackgroundBlur = true # only used when layout equals background
@@ -84,7 +84,7 @@ forgejoDefaultServer = "https://v11.next.forgejo.org"
   showPagination = true
   invertPagination = false
   showReadingTime = true
-  showTableOfContents = false
+  showTableOfContents = true
   # showRelatedContent = false
   # relatedContentLimit = 3
   showTaxonomies = false # use showTaxonomies OR showCategoryOnly, not both

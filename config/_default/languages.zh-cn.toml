@@ -11,11 +11,11 @@ title = "Jason Chen"
   dateFormat = "2 January 2006"
   # logo = "img/WeChatAvatar.jpg"
   # secondaryLogo = "img/secondary-logo.png"
-  description = "陈镜屹的个人网站"
-  copyright = "© 2026 [陈镜屹](https://shadow-of-light123.github.io/) . All rights reserved."
+  description = "Jason Chen的个人网站"
+  copyright = "© 2026 [Jason Chen](https://shadow-of-light123.github.io/) . All rights reserved."
 
  [params.author]
-   name = "陈镜屹"
+   name = "Jason Chen"
    email = "cjy18297922182@163.com" 
    image = "img/WeChatAvatar.jpg"
    imageQuality = 96

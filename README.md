@@ -20,7 +20,8 @@
 .
 ├── config/_default/      # 站点配置（主配置、语言、菜单、主题参数等）
 ├── content/
-│   ├── posts/            # 博客文章（Markdown）
+│   ├── bagu/             # 八股：技术知识点整理（Markdown）
+│   ├── essays/           # 随笔：想法与记录（Markdown）
 │   └── about/            # 关于页面
 ├── layouts/partials/     # 覆盖主题的自定义模板（如 favicon）
 ├── assets/img/           # 背景图、头像等静态资源
@@ -46,10 +47,14 @@ hugo --minify
 ## 写新文章
 
 ```bash
-hugo new content posts/my-new-post.md
+# 八股（技术知识点）
+hugo new content bagu/my-new-post.md
+
+# 随笔（想法与记录）
+hugo new content essays/my-new-post.md
 ```
 
-文章存放在 `content/posts/` 目录下，front matter 支持 `tags`、`categories`、`series` 等分类法。将 `draft` 设为 `false` 后，文章才会在正式构建中发布。
+文章分别存放在 `content/bagu/`（八股）和 `content/essays/`（随笔）目录下，front matter 支持 `tags`、`categories`、`series` 等分类法。将 `draft` 设为 `false` 后，文章才会在正式构建中发布。带图片的文章建议用页面束（page bundle）形式：新建 `content/essays/文章名/index.md`，图片放同目录下的 `images/` 里，正文用相对路径 `images/xxx.jpg` 引用。
 
 ## 部署
 
