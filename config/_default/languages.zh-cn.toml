@@ -12,14 +12,14 @@ title = "Jason Chen"
   # logo = "img/WeChatAvatar.jpg"
   # secondaryLogo = "img/secondary-logo.png"
   description = "Jason Chen的个人网站"
-  copyright = "© 2026 [Jason Chen](https://shadow-of-light123.github.io/) . All rights reserved."
+  copyright = "© 2026 [Jason Chen](https://www.chenjingyi.top/) . All rights reserved."
 
  [params.author]
    name = "Jason Chen"
    email = "cjy18297922182@163.com" 
    image = "img/WeChatAvatar.jpg"
    imageQuality = 96
-   headline = "”不要把梦想埋没“"
+   headline = "“不要把梦想埋没”"
    bio = "一名web全栈开发者"
    links = [
      { email = "mailto:cjy18297922182@163.com" },

@@ -20,7 +20,7 @@ hugo new content bagu/my-new-post.md
 hugo new content essays/my-new-post.md
 ```
 
-CI 使用 Hugo 0.159.1 extended 版本（与本地开发环境保持一致），通过 `.github/workflows/hugo.yml` 在 push 到 `main` 时自动部署到 GitHub Pages。升级本地 Hugo 时记得同步修改 workflow 里的 `HUGO_VERSION`。
+CI 使用 Hugo 0.165.0 extended 版本（与本地开发环境保持一致），通过 `.github/workflows/hugo.yml` 在 push 到 `main` 时自动部署到 GitHub Pages。升级本地 Hugo 时记得同步修改 workflow 里的 `HUGO_VERSION`。
 
 ## 项目结构
 
