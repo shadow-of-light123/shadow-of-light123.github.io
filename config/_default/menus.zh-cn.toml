@@ -16,6 +16,11 @@
   weight = 10
 
 [[main]]
+  name = "面经"
+  pageRef = "mianjing"
+  weight = 15
+
+[[main]]
   name = "随笔"
   pageRef = "essays"
   weight = 20
