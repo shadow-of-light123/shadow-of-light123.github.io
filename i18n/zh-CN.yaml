@@ -1,0 +1,3 @@
+# 站点级翻译覆盖：优先级高于主题的 i18n/zh-CN.yaml
+global:
+  language: '中文'

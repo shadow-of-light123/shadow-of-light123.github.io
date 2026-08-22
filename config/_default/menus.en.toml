@@ -1,0 +1,38 @@
+# -- Main Menu (English) --
+
+[[main]]
+  name = "Home"
+  pageRef = "/"
+  weight = 1
+
+[[main]]
+  name = "Interview Prep"
+  pageRef = "bagu"
+  weight = 10
+
+[[main]]
+  name = "Interview Experience"
+  pageRef = "mianjing"
+  weight = 15
+
+[[main]]
+  name = "Essays"
+  pageRef = "essays"
+  weight = 20
+
+[[main]]
+  name = "About"
+  pageRef = "about"
+  weight = 30
+
+# -- Footer Menu --
+
+ [[footer]]
+   name = "Tags"
+   pageRef = "tags"
+   weight = 10
+
+ [[footer]]
+   name = "Categories"
+   pageRef = "categories"
+   weight = 20

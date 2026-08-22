@@ -1,0 +1,27 @@
+disabled = false
+locale = "en"
+label = "English"
+weight = 2
+title = "Jason Chen"
+
+[params]
+  displayName = "English"
+  isoCode = "en"
+  rtl = false
+  dateFormat = "2 January 2006"
+  # logo = "img/WeChatAvatar.jpg"
+  # secondaryLogo = "img/secondary-logo.png"
+  description = "Jason Chen's personal website"
+  copyright = "© 2026 [Jason Chen](https://shadow-of-light123.github.io/) . All rights reserved."
+
+ [params.author]
+   name = "Jason Chen"
+   email = "cjy18297922182@163.com"
+   image = "img/WeChatAvatar.jpg"
+   imageQuality = 96
+   headline = "Don't bury your dreams"
+   bio = "A web full-stack developer"
+   links = [
+     { email = "mailto:cjy18297922182@163.com" },
+     { github = "https://github.com/shadow-of-light123" },
+   ]
