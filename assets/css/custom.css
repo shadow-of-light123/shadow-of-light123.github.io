@@ -37,9 +37,9 @@
   word-break: break-word; /* 旧浏览器回退 */
 }
 
-/* 修复移动端表格溢出：单元格内长内容（代码、方法名串等）允许在任意字符处折行，
-   缩小表格最小宽度，窄屏下表格完整显示，表头不再被截断或撑破正文列 */
-.article-content th,
-.article-content td {
+/* 修复移动端正文溢出：长英文串（方法名链、URL、类名等）允许在任意字符处折行。
+   anywhere 参与 min-content 宽度计算，段落/列表/表格/标题不再被长词撑宽；
+   代码块 pre 因 white-space:pre 无断行点，不受影响，仍保持内部横向滚动 */
+.article-content * {
   overflow-wrap: anywhere;
 }
