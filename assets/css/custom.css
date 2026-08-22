@@ -3,7 +3,10 @@
 /* 卡片悬停动效：上浮 + 阴影 + 主题色描边 */
 .article-link--card,
 .article-link--related {
-  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
 }
 
 .article-link--card:hover,
@@ -24,4 +27,12 @@
   .article-link--related:hover {
     transform: none;
   }
+}
+
+/* 修复移动端长标题向右溢出：长英文单词（如类名）放不下时强制折行 */
+#single_header h1,
+.article-link--card h2,
+.article-link--related h2 {
+  overflow-wrap: anywhere;
+  word-break: break-word; /* 旧浏览器回退 */
 }

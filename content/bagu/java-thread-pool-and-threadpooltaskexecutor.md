@@ -1,9 +1,9 @@
 ---
-title: 'Java 线程池与 ThreadPoolTaskExecutor'
+title: 'Java 线程池'
 date: 2026-08-21
 draft: false
 categories: ['Java']
-tags: ['Java', '并发编程', 'Spring']
+tags: ['并发编程', 'Spring']
 ---
 
 ## 为什么要用线程池
