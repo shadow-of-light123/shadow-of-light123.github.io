@@ -1,5 +1,12 @@
 /* 自定义样式：此文件会在主题样式之后自动加载，优先级高于默认值 */
 
+/* 文章正文稍微加宽：65ch → 70ch。
+   主题的 .max-w-prose 位于 @layer utilities 内，此处为无层级样式，天然优先；
+   同时作用于文章标题、正文、页脚信息栏，保持整体对齐 */
+.max-w-prose {
+  max-width: 70ch;
+}
+
 /* 卡片悬停动效：上浮 + 阴影 + 主题色描边 */
 .article-link--card,
 .article-link--related {
