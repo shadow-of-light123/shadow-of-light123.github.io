@@ -7,13 +7,18 @@
   max-width: 70ch;
 }
 
+/* 全站统一缓动曲线（easeOutQuint）：入场动画与 hover 动效共用，避免各处手写不一致 */
+:root {
+  --home-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 /* 卡片悬停动效：上浮 + 阴影 + 主题色描边 */
 .article-link--card,
 .article-link--related {
   transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease,
-    border-color 0.3s ease;
+    transform 0.3s var(--home-ease),
+    box-shadow 0.3s var(--home-ease),
+    border-color 0.3s var(--home-ease);
 }
 
 .article-link--card:hover,
@@ -291,4 +296,205 @@ html.dark .chroma .gs {
 
 html.dark .chroma .gl {
   text-decoration: underline;
+}
+
+/* ============ 主页渐进式入场动画 ============
+   纯 CSS 实现，零 JS：除头像含一次性 filter 渐清外，只动画 transform / opacity
+   （GPU 合成层，不触发重排），各元素按预设顺序 staggered 依次入场。
+   注意：统一使用 animation-fill-mode: backwards —— 结束后动画不再锁定样式，
+   保证卡片已有的 hover 位移（.article-link--card:hover 的 translateY）正常生效。
+
+   时间轴（总时长约 1.6s；单元素 0.45s，背景 1s、头像 0.7s 略长以压住场面，
+   间隔 55–60ms。刻意压在 1.5s 上下：再长就从「有质感」变成「等它演完」，
+   回访体验尤其明显）：
+     0.00s  背景图 + 渐变遮罩（作为整段动画的锚点，最先起）
+     0.05s  头像
+     0.30s  欢迎语逐词 + 👋（延迟由模板算出，见 --word-delay）
+     0.60s  标语
+     0.72s  社交链接逐个（延迟由模板算出，见 --link-delay）
+     0.84s  「最近的文章」标题
+     0.92s  文章卡片逐张 */
+
+/* 基础入场：淡入 + 上浮 */
+@keyframes home-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 背景层入场：淡入 + 轻微回缩（1.04 → 1），给整屏一个缓慢的「落定」感。
+   放大方向是向外溢出，不会在视口边缘露出空隙；父级 sm:overflow-hidden 不裁切
+   fixed 定位的后代，所以溢出部分自然不可见 */
+@keyframes home-backdrop-in {
+  from {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* —— 背景图 + 两层渐变遮罩（整段动画的锚点，0s 起 1s 完成）——
+   整个容器一起动，而不是只动 <img>：否则遮罩会在首帧以满不透明度压在图上 */
+.home-hero-backdrop {
+  animation: home-backdrop-in 1s var(--home-ease) backwards;
+}
+
+/* 头像入场：模糊渐清 + 上浮 + 大幅缩放（144px 小图一次性 filter 动画，开销可忽略） */
+@keyframes home-avatar-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.7);
+    filter: blur(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+/* 欢迎语逐词揭示：单词从遮罩下方滑入 */
+@keyframes hero-word-in {
+  from {
+    transform: translateY(130%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* —— 头像（0.05s 起 0.7s 完成）—— */
+.home-hero-avatar {
+  animation: home-avatar-in 0.7s var(--home-ease) 0.05s backwards;
+}
+
+/* —— 欢迎语 "Hi, I'm Jason Chen"（核心元素，0.3s 起逐词错开）——
+   遮罩 inline-block + overflow hidden；padding/margin 互抵避免逗号等下缘字符被裁切 */
+.home-hero-title .hero-mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding-bottom: 0.15em;
+  margin-bottom: -0.15em;
+}
+
+.home-hero-title .hero-word {
+  display: inline-block;
+  animation: hero-word-in 0.45s var(--home-ease) var(--word-delay, 0.3s) backwards;
+}
+
+/* —— 欢迎表情 👋：位于文字最前，与第一个词同步淡入，随后挥手 3 次后停 ——
+   同一元素挂两条动画，分别只作用于 opacity 与 transform，互不冲突；
+   不放进 .hero-mask（overflow hidden 会裁切挥手时的旋转）。
+   刻意不用 infinite：名字旁边永不停的动效是持续的注意力干扰，也一直占着合成层；
+   且 WCAG 2.2.2 要求超过 5s 的运动内容提供暂停手段 —— 1.6s × 3 = 4.8s 正好收在线内 */
+@keyframes hero-emoji-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 挥手波形：0–55% 摆动，55%–100% 静止休息，共 3 轮 */
+@keyframes hero-wave {
+  0%,
+  55%,
+  100% {
+    transform: rotate(0deg);
+  }
+
+  10% {
+    transform: rotate(14deg);
+  }
+
+  20% {
+    transform: rotate(-8deg);
+  }
+
+  30% {
+    transform: rotate(12deg);
+  }
+
+  40% {
+    transform: rotate(-4deg);
+  }
+
+  50% {
+    transform: rotate(10deg);
+  }
+}
+
+.hero-emoji {
+  display: inline-block;
+  transform-origin: 70% 80%;
+  animation:
+    hero-emoji-fade 0.45s var(--home-ease) 0.3s backwards,
+    hero-wave 1.6s ease-in-out 0.3s 3;
+}
+
+/* —— 标语、社交链接、最近文章依次跟进 —— */
+.home-hero-headline {
+  animation: home-fade-up 0.45s var(--home-ease) 0.6s backwards;
+}
+
+/* 注：站点没有 content/_index.md，首页 .home-hero-content 是个空 section，
+   曾有的入场规则永远作用不到，已删除。若日后补上首页自述文案，
+   在此加回 `.home-hero-content { animation: home-fade-up 0.45s var(--home-ease) 0.72s backwards; }`
+   并把 .home-hero-content 补进文末的 prefers-reduced-motion 列表 */
+
+/* 社交链接逐个淡入；--link-delay 由 background.html 按索引算出，
+   链接增减无需再维护 :nth-child 序列 */
+.home-hero-links a {
+  animation: home-fade-up 0.45s var(--home-ease) var(--link-delay, 0.72s) backwards;
+}
+
+/* 最近文章区块：标题先入，卡片逐张跟进。
+   卡片由主题 partial 输出（不改主题源码），延迟只能靠 :nth-child 排；
+   条数与 params.toml 的 homepage.showRecentItems = 5 对应，改配置时同步增减 */
+.home-recent h2 {
+  animation: home-fade-up 0.45s var(--home-ease) 0.84s backwards;
+}
+
+.home-recent .article-link--card {
+  animation: home-fade-up 0.45s var(--home-ease) 0.92s backwards;
+}
+
+.home-recent .article-link--card:nth-child(2) {
+  animation-delay: 0.98s;
+}
+
+.home-recent .article-link--card:nth-child(3) {
+  animation-delay: 1.04s;
+}
+
+.home-recent .article-link--card:nth-child(4) {
+  animation-delay: 1.1s;
+}
+
+.home-recent .article-link--card:nth-child(5) {
+  animation-delay: 1.16s;
+}
+
+/* 尊重系统的减少动效偏好：关闭动画，内容直接完整呈现 */
+@media (prefers-reduced-motion: reduce) {
+  .home-hero-backdrop,
+  .home-hero-avatar,
+  .home-hero-title .hero-word,
+  .hero-emoji,
+  .home-hero-headline,
+  .home-hero-links a,
+  .home-recent h2,
+  .home-recent .article-link--card {
+    animation: none;
+  }
 }
