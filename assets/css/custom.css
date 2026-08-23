@@ -50,3 +50,245 @@
 .article-content * {
   overflow-wrap: anywhere;
 }
+
+/* ============ 代码块高亮：Cursor 原生 Dark（官方主题 Cursor Dark Anysphere） ============
+   配色提取自本机 Cursor 安装目录内置的官方主题文件：
+   resources/app/extensions/theme-cursor/themes/cursor-dark-color-theme.json
+   仅覆盖深色模式（html.dark）；浅色模式沿用主题的 github 配色。
+   主题的 chroma 样式位于 @layer utilities 内，此处为无层级样式，天然优先。
+   背景 #181818 / 前景 #d6d6dd / 关键字青 #82d2ce / Java 关键字与类型橙 #efb080 /
+   字符串粉 #e394dc / 数字暖黄 #ebc88d / JS 变量灰 #cccccc + 调用名金 #ebc88d /
+   内建类橙 #efb080 / Vue 标签浅蓝 #87c3ff / Vue 属性紫 #aaa0fa /
+   函数声明橙 #efb080（粗体）/ 注释浅灰斜体 #f0f0f099 */
+
+/* 代码块背景与标题栏（与 Cursor 编辑器背景一致） */
+html.dark .chroma {
+  color: #d6d6dd;
+  background-color: #181818;
+}
+
+html.dark .bg {
+  color: #d6d6dd;
+  background-color: #181818;
+}
+
+html.dark .codeblock-title {
+  background-color: #181818;
+}
+
+/* 错误 */
+html.dark .chroma .err {
+  color: #e34671;
+}
+
+/* 行号：与 Cursor 一致（前景色 36% 透明度） */
+html.dark .chroma .lnt,
+html.dark .chroma .ln {
+  color: #f0f0f05c;
+}
+
+/* 行高亮 */
+html.dark .chroma .hl {
+  background-color: #262626;
+}
+
+/* 关键字：new/if/return/import(js)/const —— keyword → #82D2CE */
+html.dark .chroma .k,
+html.dark .chroma .kr,
+html.dark .chroma .ow {
+  color: #82d2ce;
+}
+
+/* 修饰符与声明关键字：public/static/final/class —— storage → #82d2ce */
+html.dark .chroma .kd {
+  color: #82d2ce;
+}
+
+/* package/import（Java）：storage.modifier.import.java → #efb080 */
+html.dark .chroma .kn {
+  color: #efb080;
+}
+
+/* 基本类型：int/void —— storage.type.primitive 走不到专属规则，
+   落到 storage 兜底 → #82d2ce（与真实 Cursor 一致） */
+html.dark .chroma .kt {
+  color: #82d2ce;
+}
+
+/* 布尔与空值常量：true/false/null —— constant.language → #82d2ce */
+html.dark .chroma .kc {
+  color: #82d2ce;
+}
+
+/* Java/bash 等语言的标识符与变量 —— variable.other.readwrite → #87C3FF */
+html.dark .chroma .n,
+html.dark .chroma .nv,
+html.dark .chroma .vc,
+html.dark .chroma .vg,
+html.dark .chroma .vi,
+html.dark .chroma .vm,
+html.dark .chroma .py {
+  color: #87c3ff;
+}
+
+/* JS/TS 标识符：Chroma 把变量、调用名、属性统一归为 .nx，
+   以量最大的变量色为主 —— 语义规则 variable:javascript → #CCCCCC 灰 */
+html.dark .chroma .nx {
+  color: #cccccc;
+}
+
+/* 紧邻标点的 .nx（ref( / push( / .then( / Scheduler { 等调用名）→ 金 #ebc88d，
+   近似 Cursor 语义规则 function → #ebc88d；
+   误伤：参数表末尾参数、点号前对象——量少可接受；
+   浏览器不支持 :has 时自动回退为全灰 */
+html.dark .chroma .nx:has(+ .p) {
+  color: #ebc88d;
+}
+
+/* 类与类型引用 —— entity.name.type.class / support.class → #87c3ff */
+html.dark .chroma .nc,
+html.dark .chroma .ne {
+  color: #87c3ff;
+}
+
+/* Vue/HTML 模板属性（class、@click、:href）—— entity.other.attribute-name → #AAA0FA 紫 */
+html.dark .chroma .na {
+  color: #aaa0fa;
+}
+
+/* Java 方法/成员访问：点号后的 execute/println 同为 .na —— 语义规则 method → #ebc88d 金。
+   借 Hugo 输出的 code.language-* 语言类按语言拆分，避免与上面的属性紫冲突 */
+html.dark .chroma code.language-java .na {
+  color: #ebc88d;
+}
+
+/* 内建函数：echo/console —— support.function → #efb080 */
+html.dark .chroma .nb {
+  color: #efb080;
+}
+
+/* 函数声明 —— entity.name.function → #efb080，语义层声明为粗体 */
+html.dark .chroma .nf {
+  color: #efb080;
+  font-weight: bold;
+}
+
+/* 注解：@Override → #efb080 */
+html.dark .chroma .nd {
+  color: #efb080;
+}
+
+/* HTML 标签 / YAML 键 —— entity.name.tag → #87c3ff */
+html.dark .chroma .nt {
+  color: #87c3ff;
+}
+
+/* 常量 —— variable.other.constant → #AAA0FA */
+html.dark .chroma .no {
+  color: #aaa0fa;
+}
+
+/* this/self 风格标签 —— variable.language → #CC7C8A */
+html.dark .chroma .nl {
+  color: #cc7c8a;
+}
+
+/* HTML 实体 —— constant.character.entity → #d6d6dd */
+html.dark .chroma .ni,
+html.dark .chroma .bp {
+  color: #d6d6dd;
+}
+
+/* 字符串 —— string → #e394dc（Cursor 标志性粉色） */
+html.dark .chroma .s,
+html.dark .chroma .sa,
+html.dark .chroma .sb,
+html.dark .chroma .sc,
+html.dark .chroma .s2,
+html.dark .chroma .si,
+html.dark .chroma .sx,
+html.dark .chroma .s1,
+html.dark .chroma .ss,
+html.dark .chroma .sh,
+html.dark .chroma .sd,
+html.dark .chroma .dl {
+  color: #e394dc;
+}
+
+/* 转义序列 —— constant.character.escape → #d6d6dd */
+html.dark .chroma .se {
+  color: #d6d6dd;
+}
+
+/* 正则 —— string.regexp → #d6d6dd */
+html.dark .chroma .sr {
+  color: #d6d6dd;
+}
+
+/* 数字 —— constant.numeric → #ebc88d */
+html.dark .chroma .m,
+html.dark .chroma .mb,
+html.dark .chroma .mf,
+html.dark .chroma .mh,
+html.dark .chroma .mi,
+html.dark .chroma .il,
+html.dark .chroma .mo {
+  color: #ebc88d;
+}
+
+/* 运算符与标点 —— keyword.operator / punctuation → #d6d6dd */
+html.dark .chroma .o,
+html.dark .chroma .p,
+html.dark .chroma .l,
+html.dark .chroma .ld {
+  color: #d6d6dd;
+}
+
+/* 注释 —— comment → #F0F0F099 斜体（浅灰） */
+html.dark .chroma .c,
+html.dark .chroma .ch,
+html.dark .chroma .cm,
+html.dark .chroma .c1,
+html.dark .chroma .cs {
+  color: #f0f0f099;
+  font-style: italic;
+}
+
+/* 预处理指令 —— keyword.control.directive → #a8cc7c */
+html.dark .chroma .cp,
+html.dark .chroma .cpf {
+  color: #a8cc7c;
+}
+
+/* diff 增删行 */
+html.dark .chroma .gd,
+html.dark .chroma .gr,
+html.dark .chroma .gt {
+  color: #e34671;
+}
+
+html.dark .chroma .gi {
+  color: #a8cc7c;
+}
+
+html.dark .chroma .gh,
+html.dark .chroma .gu {
+  color: #aaa0fa;
+}
+
+html.dark .chroma .go,
+html.dark .chroma .gp {
+  color: #d6d6dd;
+}
+
+html.dark .chroma .ge {
+  font-style: italic;
+}
+
+html.dark .chroma .gs {
+  font-weight: bold;
+}
+
+html.dark .chroma .gl {
+  text-decoration: underline;
+}
