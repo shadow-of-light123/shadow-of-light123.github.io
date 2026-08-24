@@ -1,0 +1,50 @@
+{{/* giscus 评论系统（基于 GitHub Discussions） 依赖：仓库已开启
+Discussions，且已安装 giscus App（https://github.com/apps/giscus）
+主题跟随站点明暗切换；语言跟随页面语言（中文页 zh-CN，英文页 en） */}}
+<div id="giscus-container"></div>
+<script>
+  ;(function () {
+    var getTheme = function () {
+      return document.documentElement.classList.contains('dark')
+        ? 'transparent_dark'
+        : 'light'
+    }
+
+    var s = document.createElement('script')
+    s.src = 'https://giscus.app/client.js'
+    s.setAttribute(
+      'data-repo',
+      'shadow-of-light123/shadow-of-light123.github.io',
+    )
+    s.setAttribute('data-repo-id', 'R_kgDOR5dtbQ')
+    s.setAttribute('data-category', 'Announcements')
+    s.setAttribute('data-category-id', 'DIC_kwDOR5dtbc4DEEmo')
+    s.setAttribute('data-mapping', 'pathname')
+    s.setAttribute('data-strict', '1')
+    s.setAttribute("data-lang", "{{ cond (eq .Lang "zh-cn") "zh-CN" "en" }}");
+    s.setAttribute('data-emit-metadata', '0')
+    s.setAttribute('data-input-position', 'top')
+    s.setAttribute(
+      'data-lang',
+      document.getElementById('giscus-container').dataset.giscusLang,
+    )
+    s.setAttribute('data-theme', getTheme())
+    s.crossOrigin = 'anonymous'
+    s.async = true
+    document.getElementById('giscus-container').appendChild(s)
+
+    // 跟随站点明暗切换，实时同步评论区主题
+    var updateTheme = function () {
+      var iframe = document.querySelector('iframe.giscus-frame')
+      if (!iframe) return
+      iframe.contentWindow.postMessage(
+        { giscus: { setConfig: { theme: getTheme() } } },
+        'https://giscus.app',
+      )
+    }
+    new MutationObserver(updateTheme).observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    })
+  })()
+</script>

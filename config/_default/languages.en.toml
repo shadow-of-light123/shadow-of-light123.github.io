@@ -14,12 +14,12 @@ title = "Jason Chen"
 
   [params.author]
     name = "Jason Chen"
-    email = "cjy18297922182@163.com"
+    email = "3208310676@qq.com"
     image = "img/WeChatAvatar.jpg"
     imageQuality = 96
     headline = "Don't bury your dreams"
     bio = "A web full-stack developer"
     links = [
-      { email = "mailto:cjy18297922182@163.com" },
+      { email = "mailto:3208310676@qq.com" },
       { github = "https://github.com/shadow-of-light123" },
     ]

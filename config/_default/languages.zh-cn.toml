@@ -16,13 +16,13 @@ title = "Jason Chen"
 
  [params.author]
    name = "Jason Chen"
-   email = "cjy18297922182@163.com" 
+   email = "3208310676@qq.com"
    image = "img/WeChatAvatar.jpg"
    imageQuality = 96
    headline = "“不要把梦想埋没”"
    bio = "一名web全栈开发者"
    links = [
-     { email = "mailto:cjy18297922182@163.com" },
+     { email = "mailto:3208310676@qq.com" },
 #     { link = "https://link-to-some-website.com/" },
 #     { amazon = "https://www.amazon.com/hz/wishlist/ls/wishlist-id" },
 #     { apple = "https://www.apple.com" },
