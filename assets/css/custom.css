@@ -498,3 +498,324 @@ html.dark .chroma .gl {
     animation: none;
   }
 }
+
+/* ============ Waline 评论区：套上站点自己的设计语言 ============
+   waline.css 由 comments.html 用 <link> 在 body 中引入，文档顺序晚于本文件，
+   同特异性下它会赢；因此下面所有规则统一挂在容器 id #waline 上，靠 id 特异性取胜。
+   变量则天然生效：定义在 #waline 上的自定义属性直接覆盖 Waline 写在 :root、
+   以及深色模式下运行时注入的 html.dark 规则里的同名变量。
+   变量清单：https://waline.js.org/reference/client/style.html */
+
+/* —— 浅色：把 Waline 的变量全部映射到主题的 neutral / primary 色板 —— */
+#waline {
+  /* 页面底色（浅色 = 白）：评论卡片直接铺在页面上，长评论折叠渐变要对齐它 */
+  --wl-page-bg: rgb(var(--color-neutral));
+
+  --waline-font-size: 1.0625rem;
+  --waline-theme-color: rgb(var(--color-primary-600));
+  --waline-active-color: rgb(var(--color-primary-500));
+
+  --waline-color: rgb(var(--color-neutral-700));
+  --waline-dark-grey: rgb(var(--color-neutral-500));
+  --waline-light-grey: rgb(var(--color-neutral-400));
+
+  --waline-bg-color: rgb(var(--color-neutral-50));
+  --waline-bg-color-light: rgb(var(--color-neutral-100));
+  --waline-bg-color-hover: rgb(var(--color-neutral-200));
+  --waline-border-color: rgb(var(--color-neutral-200));
+  --waline-disable-bg-color: rgb(var(--color-neutral-100));
+  --waline-disable-color: rgb(var(--color-neutral-400));
+
+  --waline-bq-color: rgb(var(--color-neutral-200));
+  --waline-info-color: rgb(var(--color-neutral-500));
+  --waline-info-bg-color: rgb(var(--color-neutral-100));
+  --waline-info-font-size: 0.75em; /* 默认 0.625em 在正文 17px 下已经糊了 */
+  --waline-badge-color: rgb(var(--color-primary-600));
+  --waline-box-shadow: 0 1px 2px rgba(var(--color-neutral-900), 0.08);
+}
+
+/* —— 深色：页面底色是 neutral-800，输入框用更深的 neutral-900 做「凹陷」感 ——
+   Waline 深色下会把 --waline-white 改成 #000（它默认按色相翻转），
+   但主按钮是实心蓝底，文字必须留白，所以这里改回 #fff */
+html.dark #waline {
+  --wl-page-bg: rgb(var(--color-neutral-800));
+
+  --waline-white: #fff;
+  --waline-theme-color: rgb(var(--color-primary-400));
+  --waline-active-color: rgb(var(--color-primary-300));
+
+  --waline-color: rgb(var(--color-neutral-300));
+  --waline-dark-grey: rgb(var(--color-neutral-400));
+  --waline-light-grey: rgb(var(--color-neutral-500));
+
+  --waline-bg-color: rgb(var(--color-neutral-900));
+  /* 兼作行内代码底色：卡片铺在 neutral-800 上，取 700 才有对比 */
+  --waline-bg-color-light: rgb(var(--color-neutral-700));
+  --waline-bg-color-hover: rgb(var(--color-neutral-700));
+  --waline-border-color: rgb(var(--color-neutral-700));
+  --waline-disable-bg-color: rgb(var(--color-neutral-700));
+  --waline-disable-color: rgb(var(--color-neutral-500));
+
+  --waline-bq-color: rgb(var(--color-neutral-700));
+  --waline-info-color: rgb(var(--color-neutral-400));
+  --waline-info-bg-color: rgb(var(--color-neutral-700));
+  --waline-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+/* —— 输入区：一整块卡片，聚焦时只把描边压深一档，不加高亮色和外发光 —— */
+#waline .wl-panel {
+  margin: 0;
+  border-radius: 0.9em;
+  transition: border-color 0.25s var(--home-ease);
+}
+
+/* 登录后左侧才会多出头像列：面板 margin 归零后它会紧贴输入框，
+   这里补回间距（取 1em，与输入框自身的左右留白同宽）。
+   间距挂在头像列上而不是面板上，未登录时面板仍与正文左右对齐 */
+#waline .wl-login-info {
+  margin-inline-end: 1em;
+}
+
+#waline .wl-panel:focus-within {
+  border-color: rgb(var(--color-neutral-400));
+}
+
+html.dark #waline .wl-panel:focus-within {
+  border-color: rgb(var(--color-neutral-500));
+}
+
+#waline .wl-editor {
+  /* Waline 把自己内部的 box-sizing 设成 content-box，而 Blowfish 引入的
+     @tailwindcss/forms 在 @layer base 里给 textarea 加了 0.5rem/0.75rem 内边距，
+     两者叠加会让输入框比面板宽出 1.5rem。这里改回 border-box 并清掉内边距，
+     左右留白统一交给 margin，与下方工具栏对齐 */
+  box-sizing: border-box;
+  width: calc(100% - 2em);
+  min-height: 6.5em; /* 默认 8.75em，关掉昵称/邮箱后显得过于空旷 */
+  padding: 0;
+  margin: 0.9em 1em;
+  font-size: 0.9375em;
+  line-height: 1.75;
+}
+
+/* 预览区（点「预览」才出现）：左右留白对齐输入框的 1em，默认是 0.5em */
+#waline .wl-preview {
+  padding: 0 1em 0.5em;
+}
+
+/* 聚焦反馈交给外层面板的描边：
+   这里清掉 Waline 的「换底色」，以及 @tailwindcss/forms 给 textarea:focus 加的
+   1px 蓝色 ring 和蓝色描边（它在 @layer base 内，无层级样式即可覆盖） */
+#waline .wl-editor:focus,
+#waline .wl-input:focus {
+  border-color: rgba(0, 0, 0, 0);
+  background: rgba(0, 0, 0, 0);
+  box-shadow: none;
+}
+
+#waline .wl-editor::placeholder {
+  color: rgb(var(--color-neutral-500));
+}
+
+html.dark #waline .wl-editor::placeholder {
+  color: rgb(var(--color-neutral-400));
+}
+
+/* —— 工具栏图标（表情 / 图片 / 预览）：补上圆角 hover 底，点击区域更明确 —— */
+#waline .wl-footer {
+  margin: 0.5em 1em 0.85em;
+}
+
+#waline .wl-action {
+  width: 1.75em;
+  height: 1.75em;
+  border-radius: 0.5em;
+  transition:
+    color 0.2s var(--home-ease),
+    background-color 0.2s var(--home-ease);
+}
+
+#waline .wl-action:hover {
+  background: var(--waline-bg-color-hover);
+}
+
+/* Markdown 说明图标是 <a>（其余几个是 <button>），Waline 的 [data-waline] a 规则
+   特异性更高，把 .wl-action 的 inline-flex 压成了 inline-block：图标于是按文字基线
+   对齐、下方留出降部空隙，看起来比旁边的按钮偏上。拉回 flex 居中即可 */
+#waline a.wl-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* —— 按钮：与全站 CTA 同款（实心 primary-600 + 微上浮 + 投影）—— */
+#waline .wl-btn {
+  border-radius: 0.6em;
+  font-weight: 500;
+  font-size: 0.8125em;
+  transition: all 0.25s var(--home-ease);
+}
+
+#waline .wl-btn.primary {
+  border-color: rgb(var(--color-primary-600));
+  background: rgb(var(--color-primary-600));
+  color: #fff;
+  box-shadow: 0 6px 16px -8px rgba(var(--color-primary-500), 0.9);
+}
+
+#waline .wl-btn.primary:hover:not(:disabled),
+#waline .wl-btn.primary:active:not(:disabled) {
+  border-color: rgb(var(--color-primary-500));
+  background: rgb(var(--color-primary-500));
+  transform: translateY(-1px);
+}
+
+/* id 特异性会盖掉 Waline 自己的 :disabled 规则，这里补回禁用态 */
+#waline .wl-btn:disabled {
+  border-color: var(--waline-border-color);
+  background: var(--waline-disable-bg-color);
+  color: var(--waline-disable-color);
+  box-shadow: none;
+  transform: none;
+}
+
+#waline .wl-btn:focus-visible,
+#waline .wl-action:focus-visible {
+  outline: 2px solid rgb(var(--color-primary-500));
+  outline-offset: 2px;
+}
+
+/* —— 「N 条评论」计数行：当成列表小标题处理，下方一条细线收住 —— */
+#waline .wl-meta-head {
+  margin: 1.75em 0 0.25em;
+  padding: 0 0 0.6em;
+  border-bottom: 1px solid var(--waline-border-color);
+}
+
+#waline .wl-count {
+  color: rgb(var(--color-neutral-800));
+  font-weight: 700;
+  font-size: 1.25em;
+}
+
+html.dark #waline .wl-count {
+  color: rgb(var(--color-neutral));
+}
+
+/* —— 评论列表：扁平铺在页面上，只用细分隔线分条，不做底色与嵌套卡片 —— */
+#waline .wl-card-item {
+  padding: 0.85em 0.5em;
+}
+
+/* id 特异性会盖掉 Waline 自己的嵌套规则，这里补回：
+   嵌套回复不再叠加右内边距，否则每深一层正文就窄一截 */
+#waline .wl-card-item .wl-card-item {
+  padding-inline-end: 0;
+}
+
+#waline .wl-card {
+  padding-bottom: 0.85em;
+  border-bottom: 1px solid var(--waline-border-color); /* 默认是虚线 */
+}
+
+#waline .wl-card-item:last-child > .wl-card {
+  border-bottom: none;
+}
+
+#waline .wl-card .wl-nick {
+  font-size: 0.9375em;
+}
+
+#waline .wl-card .wl-time {
+  font-size: 0.8125em;
+}
+
+/* 浏览器 / 系统等信息小标签：做成胶囊 */
+#waline .wl-card .wl-meta > span {
+  padding: 2px 6px;
+  border-radius: 0.4em;
+}
+
+#waline .wl-content {
+  font-size: 0.9375em;
+  line-height: 1.8; /* 默认 2 在 15px 字号下过散 */
+}
+
+/* 嵌套回复的竖引导线：虚线 → 主题色细实线 */
+#waline .wl-quote {
+  margin-top: 0.35em;
+  border-inline-start: 1px solid rgba(var(--color-primary-500), 0.25);
+}
+
+/* 长评论折叠：Waline 把渐变和遮罩底色写死成白色，深色模式下会糊出一条白带，
+   这里统一换成页面底色 */
+#waline .wl-content.expand::before {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0), var(--wl-page-bg));
+}
+
+#waline .wl-content.expand::after {
+  background: var(--wl-page-bg);
+  color: var(--waline-theme-color);
+}
+
+/* 空状态（还没有评论时的一行提示）：对比度取和其他次要信息一致的 neutral-500 */
+#waline .wl-empty {
+  padding: 2em 1em;
+  color: rgb(var(--color-neutral-500));
+  font-size: 0.9375em;
+}
+
+html.dark #waline .wl-empty {
+  color: rgb(var(--color-neutral-400));
+}
+
+/* —— 表情 / GIF 浮层：加大圆角与投影，从「贴在页面上」变成「浮起来」—— */
+#waline .wl-emoji-popup,
+#waline .wl-gif-popup {
+  border-radius: 0.75em;
+  box-shadow: 0 16px 40px -16px rgba(var(--color-neutral-900), 0.45);
+}
+
+html.dark #waline .wl-emoji-popup,
+html.dark #waline .wl-gif-popup {
+  box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.65);
+}
+
+#waline .wl-emoji-popup button {
+  border-radius: 0.4em;
+}
+
+/* 底部「Powered by Waline」：保留署名但压到背景层，别和内容抢注意力 */
+#waline .wl-power {
+  opacity: 0.65;
+}
+
+#waline .wl-power a {
+  color: inherit;
+}
+
+/* 昵称 / 邮箱输入行：目前 meta = [] 不渲染（Waline 对这一行有 v-if），
+   留着以便日后重新开启匿名字段。分隔线由 2px 虚线改 1px 实线；
+   条目之间的横线只在窄屏（Waline 自己的断点）竖排时才需要 */
+#waline .wl-header {
+  border-bottom: 1px solid var(--waline-border-color);
+}
+
+@media (max-width: 580px) {
+  #waline .wl-header-item:not(:last-child) {
+    border-bottom: 1px solid var(--waline-border-color);
+  }
+}
+
+/* 尊重系统的减少动效偏好 */
+@media (prefers-reduced-motion: reduce) {
+  #waline .wl-panel,
+  #waline .wl-btn,
+  #waline .wl-action {
+    transition: none;
+  }
+
+  #waline .wl-btn.primary:hover:not(:disabled) {
+    transform: none;
+  }
+}

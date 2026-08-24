@@ -1,7 +1,49 @@
-{{/* giscus 评论系统（基于 GitHub Discussions） 依赖：仓库已开启
-Discussions，且已安装 giscus App（https://github.com/apps/giscus）
-主题跟随站点明暗切换；语言跟随页面语言（中文页 zh-CN，英文页 en） */}}
-<div id="giscus-container"></div>
+{{/* Waline 评论系统（支持匿名评论） 后端：Vercel + Neon
+Postgres，管理面板：https://waline.chenjingyi.top/ui
+首个注册的账号自动成为管理员 评论区跟随站点明暗切换；语言跟随页面语言（中文页
+zh-CN，英文页 en） 视觉样式（配色、圆角、按钮、列表）在 assets/css/custom.css
+末尾的 「Waline 评论区」一节里覆盖 */}}
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/@waline/client@v3/dist/waline.css"
+/>
+<div
+  id="waline"
+  data-waline-lang='{{ cond (eq .Lang "zh-cn") "zh-CN" "en" }}'
+></div>
+<script src="https://unpkg.com/@waline/client@v3/dist/waline.umd.js"></script>
+<script>
+  ;(function () {
+    var lang = document.getElementById('waline').dataset.walineLang
+    // locale 传入的键会与 Waline 内置文案合并，只覆盖这两条
+    var zh = {
+      placeholder: '欢迎留言 ~',
+      sofa: '还没有人留言，来抢第一条 ~',
+    }
+    var en = {
+      placeholder:
+        'Leave a comment — Markdown supported, Ctrl / ⌘ + Enter to send',
+      sofa: 'No comments yet — be the first!',
+    }
+
+    Waline.init({
+      el: '#waline',
+      serverURL: 'https://waline.chenjingyi.top',
+      dark: 'html.dark',
+      lang: lang,
+      noRss: true, // 隐藏底部“订阅评论”链接和评论旁的“订阅回复”按钮
+      meta: [], // 匿名评论不显示昵称/邮箱/网址输入框，样式与登录状态一致
+      locale: lang === 'zh-CN' ? zh : en,
+    })
+  })()
+</script>
+
+{{/* ===== 原 giscus 实现（GitHub 登录评论），如需回滚：删除上方 Waline
+代码，取消下方注释 =====
+<div
+  id="giscus-container"
+  data-giscus-lang='{{ cond (eq .Lang "zh-cn") "zh-CN" "en" }}'
+></div>
 <script>
   ;(function () {
     var getTheme = function () {
@@ -21,7 +63,7 @@ Discussions，且已安装 giscus App（https://github.com/apps/giscus）
     s.setAttribute('data-category-id', 'DIC_kwDOR5dtbc4DEEmo')
     s.setAttribute('data-mapping', 'pathname')
     s.setAttribute('data-strict', '1')
-    s.setAttribute("data-lang", "{{ cond (eq .Lang "zh-cn") "zh-CN" "en" }}");
+    s.setAttribute('data-reactions-enabled', '1')
     s.setAttribute('data-emit-metadata', '0')
     s.setAttribute('data-input-position', 'top')
     s.setAttribute(
@@ -48,3 +90,4 @@ Discussions，且已安装 giscus App（https://github.com/apps/giscus）
     })
   })()
 </script>
+===== giscus 结束 ===== */}}
