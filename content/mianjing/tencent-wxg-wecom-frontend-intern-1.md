@@ -3,7 +3,7 @@ title: '腾讯 WXG 企业微信前端一面'
 date: 2026-07-22
 draft: false
 categories: ['面经']
-tags: ['前端', '腾讯', '手撕代码']
+tags: ['腾讯', '手撕代码']
 ---
 
 ## 面试问题
