@@ -304,9 +304,11 @@ html.dark .chroma .gl {
    注意：统一使用 animation-fill-mode: backwards —— 结束后动画不再锁定样式，
    保证卡片已有的 hover 位移（.article-link--card:hover 的 translateY）正常生效。
 
-   时间轴（总时长约 1.6s；单元素 0.45s，背景 1s、头像 0.7s 略长以压住场面，
-   间隔 55–60ms。刻意压在 1.5s 上下：再长就从「有质感」变成「等它演完」，
-   回访体验尤其明显）：
+   时间轴（单元素 0.45s，背景 1s、头像 0.7s 略长以压住场面，间隔 55–60ms。
+   固定部分刻意压在 1.6s 内：再长就从「有质感」变成「等它演完」，回访体验尤其明显。
+   卡片段是唯一跟着内容增长的：60ms × 篇数，5 篇 1.61s 收尾，9 篇 1.85s ——
+   450ms 的时长是间隔的 7.5 倍，同时有 7 张在动，末张起时前面几张还没落定，
+   整段是连续的流，所以变长也不会显出拖沓）：
      0.00s  背景图 + 渐变遮罩（作为整段动画的锚点，最先起）
      0.05s  头像
      0.30s  欢迎语逐词 + 👋（延迟由模板算出，见 --word-delay）
@@ -460,7 +462,9 @@ html.dark .chroma .gl {
 
 /* 最近文章区块：标题先入，卡片逐张跟进。
    卡片由主题 partial 输出（不改主题源码），延迟只能靠 :nth-child 排；
-   条数与 params.toml 的 homepage.showRecentItems = 5 对应，改配置时同步增减 */
+   条数与 params.toml 的 homepage.showRecentItems = 9 对应（每张 +60ms），
+   改配置时同步增减：漏掉的序号会退回基础延迟 0.92s，与第一张同时入场，
+   错位的那张会把整块卡片切成两组视觉上不连续的动画 */
 .home-recent h2 {
   animation: home-fade-up 0.45s var(--home-ease) 0.84s backwards;
 }
@@ -483,6 +487,22 @@ html.dark .chroma .gl {
 
 .home-recent .article-link--card:nth-child(5) {
   animation-delay: 1.16s;
+}
+
+.home-recent .article-link--card:nth-child(6) {
+  animation-delay: 1.22s;
+}
+
+.home-recent .article-link--card:nth-child(7) {
+  animation-delay: 1.28s;
+}
+
+.home-recent .article-link--card:nth-child(8) {
+  animation-delay: 1.34s;
+}
+
+.home-recent .article-link--card:nth-child(9) {
+  animation-delay: 1.4s;
 }
 
 /* 尊重系统的减少动效偏好：关闭动画，内容直接完整呈现 */
