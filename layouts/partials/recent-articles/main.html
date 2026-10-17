@@ -1,0 +1,41 @@
+{{ $recentArticles := 5 }}
+{{ $showMoreLinkDest := "/posts/" }}
+{{ if .Site.Params.homepage.showRecent | default false }}
+  {{ if index .Site.Params.homepage "showRecentItems" }}
+    {{ $recentArticles = .Site.Params.homepage.showRecentItems }}
+  {{ end }}
+
+  {{/* 实际展示的篇数：文章不足 showRecentItems 时按真实数量显示 */}}
+  {{ $recentPages := where .Site.RegularPages "Type" "in" .Site.Params.mainSections }}
+  {{ $shownCount := len (first $recentArticles $recentPages) }}
+
+  <div class="home-recent-head">
+    <h2>{{ i18n "shortcode.recent_articles" | emojify }}</h2>
+    <span class="home-recent-rule" aria-hidden="true"></span>
+    {{ if gt $shownCount 0 }}
+      <span class="home-recent-count">{{ i18n "recent.articleCount" (dict "Count" $shownCount) }}</span>
+    {{ end }}
+  </div>
+
+  {{ if and .Site.Params.homepage.cardView (not .Site.Params.homepage.cardViewScreenWidth) | default false }}
+    {{ partial "recent-articles/cardview.html" . }}
+  {{ else if and .Site.Params.homepage.cardView .Site.Params.homepage.cardViewScreenWidth | default false }}
+    {{ partial "recent-articles/cardview-fullwidth.html" . }}
+  {{ else }}
+    {{ partial "recent-articles/list.html" . }}
+  {{ end }}
+
+  {{ if .Site.Params.homepage.showMoreLink | default false }}
+    {{ if index .Site.Params.homepage "showRecentItems" }}
+      {{ $showMoreLinkDest = .Site.Params.homepage.showMoreLinkDest }}
+    {{ end }}
+    <div class="mt-10 flex justify-center">
+      <a href="{{ $showMoreLinkDest | relLangURL }}">
+        <button
+          class="bg-transparent hover:text-primary-500 prose dark:prose-invert font-semibold py-2 px-4 border border-primary-500 hover:border-transparent rounded">
+          {{ i18n "recent.show_more" | markdownify }}
+        </button>
+      </a>
+    </div>
+  {{ end }}
+{{ end }}

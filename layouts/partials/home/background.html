@@ -79,19 +79,33 @@
           {{ end }}
           {{/* 欢迎语：按词拆分，配合 CSS 实现逐词渐进揭示（动画只走 transform/opacity） */}}
           {{ $greeting := printf "Hi, I'm %s" (.Site.Params.Author.name | default .Site.Title) }}
-          <h1 class="home-hero-title mb-2 text-4xl font-extrabold text-neutral-800 dark:text-neutral-200">
-            {{/* 欢迎表情：置于文字最前，与第一个词同步淡入，随后挥手；装饰性内容对读屏器隐藏 */}}
-            <span class="hero-emoji" aria-hidden="true">👋</span>
+          <h1 class="home-hero-title mb-0 text-neutral-800 dark:text-neutral-100">
+            {{/* 欢迎图标：暖色四角星，置于文字最前，与第一个词同步淡入；装饰性内容对读屏器隐藏 */}}
+            <span class="hero-sparkle" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path
+                  fill="currentColor"
+                  d="M10 2c.55 4.5 2.3 6.7 6.8 7.25-4.5.55-6.25 2.75-6.8 7.25-.55-4.5-2.3-6.7-6.8-7.25C7.7 8.7 9.45 6.5 10 2Z" />
+                <path
+                  class="sparkle-minor"
+                  fill="currentColor"
+                  d="M18.6 1.6c.2 1.55.8 2.35 2.35 2.55-1.55.2-2.15 1-2.35 2.55-.2-1.55-.8-2.35-2.35-2.55 1.55-.2 2.15-1 2.35-2.55Z" />
+              </svg>
+            </span>
             {{ range $i, $word := split $greeting " " }}
               <span class="hero-mask"><span class="hero-word" style="--word-delay: {{ add 300 (mul $i 60) }}ms;">{{ $word }}</span></span>
             {{ end }}
           </h1>
+          {{/* 身份行：读取 languages.zh-cn.toml 里的 author.bio，交代职业身份 */}}
+          {{ with .Site.Params.Author.bio }}
+            <p class="home-hero-bio">{{ . }}</p>
+          {{ end }}
           {{ with .Site.Params.Author.headline }}
-            <h2 class="home-hero-headline mt-0 mb-0 text-xl text-neutral-800 dark:text-neutral-300">
+            <h2 class="home-hero-headline mt-0 mb-0 text-xl text-neutral-800 dark:text-neutral-200">
               {{ . | markdownify }}
             </h2>
           {{ end }}
-          <div class="home-hero-links mt-3 mb-10 text-2xl">
+          <div class="home-hero-links mt-5 text-2xl">
             {{ with .Site.Params.Author.links }}
               <div class="flex flex-wrap">
                 {{/* 逐个错开淡入的延迟由模板算出（同 --word-delay 的做法），

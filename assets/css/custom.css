@@ -1,5 +1,29 @@
 /* 自定义样式：此文件会在主题样式之后自动加载，优先级高于默认值 */
 
+/* ============ 首页展示字体（自托管子集） ============
+   Caveat / Ma Shan Zheng 均来自 Google Fonts，已按实际用字做子集化：
+   前者保留完整 ASCII（约 43 KB），后者只含当前题词「不要把梦想埋没“”」的字符
+   （约 4 KB）。放在 static/fonts/ 下由站点直接提供，
+   不再 @import fonts.googleapis.com —— 该域名在国内不可达，会让首屏字体
+   一直卡在回退字体上。font-display: swap 保证字体未就绪时先显示回退字形。
+   注意：若日后修改题词文字，需要重新生成 ma-shan-zheng 子集，
+   否则新增的字会回退到 KaiTi */
+@font-face {
+  font-family: "Caveat";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/caveat.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Ma Shan Zheng";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/ma-shan-zheng-motto.woff2") format("woff2");
+}
+
 /* 文章正文稍微加宽：65ch → 70ch。
    主题的 .max-w-prose 位于 @layer utilities 内，此处为无层级样式，天然优先；
    同时作用于文章标题、正文、页脚信息栏，保持整体对齐 */
@@ -384,8 +408,62 @@ html.dark .chroma .gl {
   display: inline-block;
   overflow: hidden;
   vertical-align: bottom;
-  padding-bottom: 0.15em;
-  margin-bottom: -0.15em;
+  /* Parisienne 的 J 和逗号降部较长，留 0.3em 才不会被遮罩裁掉；
+     margin 负值抵消 padding，保持整体行高不变 */
+  padding-bottom: 0.3em;
+  margin-bottom: -0.3em;
+}
+
+/* 首页欢迎语：随性的手写体，像写在便签上的签名。
+   字号用自定义媒体查询控制 —— Blowfish 的 Tailwind 是预编译的，
+   项目模板里新写的 sm:/md: 工具类不会出现在产物里，写了也不生效 */
+.home-hero-title {
+  font-family: "Caveat", "Segoe Print", "Bradley Hand", cursive;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 2.5rem;
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+  /* 浅色模式背景是亮云层：用白色柔光把深色字托起来 */
+  text-shadow: 0 1px 18px rgba(255, 255, 255, 0.55);
+}
+
+@media (min-width: 640px) {
+  .home-hero-title {
+    font-size: 3.25rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .home-hero-title {
+    font-size: 3.75rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .home-hero-title {
+    font-size: 4rem;
+  }
+}
+
+html.dark .home-hero-title {
+  text-shadow: 0 2px 18px rgba(2, 6, 23, 0.45);
+}
+
+/* 头像：加一圈细描边和外扩光晕，让圆形头像从云层里“浮”出来 */
+.home-hero-avatar {
+  margin-bottom: 1.25rem;
+  box-shadow:
+    0 0 0 1px rgba(var(--color-neutral-900), 0.12),
+    0 0 0 8px rgba(255, 255, 255, 0.22),
+    0 24px 48px -20px rgba(var(--color-neutral-900), 0.5);
+}
+
+html.dark .home-hero-avatar {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.22),
+    0 0 0 8px rgba(255, 255, 255, 0.06),
+    0 24px 48px -18px rgba(0, 0, 0, 0.7);
 }
 
 .home-hero-title .hero-word {
@@ -393,12 +471,11 @@ html.dark .chroma .gl {
   animation: hero-word-in 0.45s var(--home-ease) var(--word-delay, 0.3s) backwards;
 }
 
-/* —— 欢迎表情 👋：位于文字最前，与第一个词同步淡入，随后挥手 3 次后停 ——
-   同一元素挂两条动画，分别只作用于 opacity 与 transform，互不冲突；
-   不放进 .hero-mask（overflow hidden 会裁切挥手时的旋转）。
-   刻意不用 infinite：名字旁边永不停的动效是持续的注意力干扰，也一直占着合成层；
-   且 WCAG 2.2.2 要求超过 5s 的运动内容提供暂停手段 —— 1.6s × 3 = 4.8s 正好收在线内 */
-@keyframes hero-emoji-fade {
+/* —— 欢迎图标：名字前的暖色四角星，与第一个词同步淡入，轻轻闪两下后停 ——
+   不放进 .hero-mask（overflow hidden 会裁切缩放和旋转）。
+   刻意不用 infinite：持续的动效会一直抢注意力，也一直占着合成层；
+   且 WCAG 2.2.2 要求超过 5s 的运动内容提供暂停手段 —— 总时长 3.6s 收在线内 */
+@keyframes hero-sparkle-fade {
   from {
     opacity: 0;
   }
@@ -407,46 +484,107 @@ html.dark .chroma .gl {
   }
 }
 
-/* 挥手波形：0–55% 摆动，55%–100% 静止休息，共 3 轮 */
-@keyframes hero-wave {
-  0%,
-  55%,
+/* 先弹出，再轻轻闪两下（缩放 + 旋转），最后落回原位 */
+@keyframes hero-sparkle-pop {
+  0% {
+    transform: scale(0.55) rotate(-20deg);
+  }
+
+  12% {
+    transform: scale(1.06) rotate(3deg);
+  }
+
+  22% {
+    transform: scale(1) rotate(0deg);
+  }
+
+  45% {
+    transform: scale(1.12) rotate(7deg);
+  }
+
+  68% {
+    transform: scale(0.97) rotate(-3deg);
+  }
+
+  85% {
+    transform: scale(1.05) rotate(3deg);
+  }
+
   100% {
-    transform: rotate(0deg);
-  }
-
-  10% {
-    transform: rotate(14deg);
-  }
-
-  20% {
-    transform: rotate(-8deg);
-  }
-
-  30% {
-    transform: rotate(12deg);
-  }
-
-  40% {
-    transform: rotate(-4deg);
-  }
-
-  50% {
-    transform: rotate(10deg);
+    transform: scale(1) rotate(0deg);
   }
 }
 
-.hero-emoji {
+.hero-sparkle {
   display: inline-block;
-  transform-origin: 70% 80%;
+  width: 0.78em;
+  height: 0.78em;
+  margin-inline-end: 0.08em;
+  vertical-align: -0.06em;
+  color: #f6c177;
+  filter: drop-shadow(0 0 12px rgba(246, 193, 119, 0.4));
+  transform-origin: 58% 55%;
   animation:
-    hero-emoji-fade 0.45s var(--home-ease) 0.3s backwards,
-    hero-wave 1.6s ease-in-out 0.3s 3;
+    hero-sparkle-fade 0.45s var(--home-ease) 0.3s backwards,
+    hero-sparkle-pop 3.3s ease-in-out 0.3s backwards;
+}
+
+html.light .hero-sparkle {
+  color: #d9902f;
+  filter: drop-shadow(0 1px 8px rgba(255, 255, 255, 0.7));
+}
+
+.hero-sparkle svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* 右上角的小星稍弱一点，形成主次 */
+.hero-sparkle .sparkle-minor {
+  opacity: 0.72;
 }
 
 /* —— 标语、社交链接、最近文章依次跟进 —— */
+
+/* 身份行：夹在手写名和题词之间，字号小、字距略松，只负责交代“我是谁” */
+.home-hero-bio {
+  margin: 0.35rem 0 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  letter-spacing: 0.14em;
+  color: rgba(var(--color-neutral-700), 0.9);
+  animation: home-fade-up 0.45s var(--home-ease) 0.52s backwards;
+}
+
+html.dark .home-hero-bio {
+  color: rgba(var(--color-neutral-300), 0.92);
+}
+
+/* 题词：毛笔字要有碑帖的体量感，字号比正文大、行高放松 */
 .home-hero-headline {
+  font-family: "Ma Shan Zheng", KaiTi, STKaiti, serif;
+  font-weight: 400;
+  font-size: 1.65rem;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+  text-shadow: 0 1px 14px rgba(255, 255, 255, 0.5);
   animation: home-fade-up 0.45s var(--home-ease) 0.6s backwards;
+}
+
+html.dark .home-hero-headline {
+  text-shadow: 0 2px 14px rgba(2, 6, 23, 0.42);
+}
+
+@media (max-width: 640px) {
+  .home-hero-bio {
+    font-size: 0.875rem;
+  }
+
+  .home-hero-headline {
+    font-size: 1.4rem;
+  }
 }
 
 /* 注：站点没有 content/_index.md，首页 .home-hero-content 是个空 section，
@@ -454,10 +592,48 @@ html.dark .chroma .gl {
    在此加回 `.home-hero-content { animation: home-fade-up 0.45s var(--home-ease) 0.72s backwards; }`
    并把 .home-hero-content 补进文末的 prefers-reduced-motion 列表 */
 
-/* 社交链接逐个淡入；--link-delay 由 background.html 按索引算出，
-   链接增减无需再维护 :nth-child 序列 */
+/* 社交链接：做成半透明圆形按钮，逐个淡入。
+   --link-delay 由 background.html 按索引算出，链接增减无需再维护 :nth-child 序列 */
 .home-hero-links a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin: 0 0.2rem;
+  padding: 0;
+  border-radius: 9999px;
+  border: 1px solid rgba(var(--color-neutral-900), 0.14);
+  background: rgba(255, 255, 255, 0.42);
+  color: rgb(var(--color-neutral-700));
+  transition:
+    transform 0.3s var(--home-ease),
+    background-color 0.3s var(--home-ease),
+    border-color 0.3s var(--home-ease),
+    color 0.3s var(--home-ease);
   animation: home-fade-up 0.45s var(--home-ease) var(--link-delay, 0.72s) backwards;
+}
+
+html.dark .home-hero-links a {
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.07);
+  color: rgb(var(--color-neutral-100));
+}
+
+.home-hero-links a:hover {
+  transform: translateY(-2px);
+  border-color: rgba(var(--color-primary-500), 0.55);
+  background: rgba(var(--color-primary-500), 0.16);
+  color: rgb(var(--color-primary-700));
+}
+
+html.dark .home-hero-links a:hover {
+  color: rgb(var(--color-primary-200));
+}
+
+.home-hero-links a:focus-visible {
+  outline: 2px solid rgba(var(--color-primary-500), 0.9);
+  outline-offset: 2px;
 }
 
 /* 最近文章区块：标题先入，卡片逐张跟进。
@@ -465,7 +641,8 @@ html.dark .chroma .gl {
    条数与 params.toml 的 homepage.showRecentItems = 9 对应（每张 +60ms），
    改配置时同步增减：漏掉的序号会退回基础延迟 0.92s，与第一张同时入场，
    错位的那张会把整块卡片切成两组视觉上不连续的动画 */
-.home-recent h2 {
+/* 整个标题栏（标题 + 细线 + 篇数）作为一体入场，避免线条和计数先于标题出现 */
+.home-recent-head {
   animation: home-fade-up 0.45s var(--home-ease) 0.84s backwards;
 }
 
@@ -505,17 +682,203 @@ html.dark .chroma .gl {
   animation-delay: 1.4s;
 }
 
+/* ============ 首页「最近的文章」：标题栏 + 卡片 ============ */
+
+/* 标题栏：标题 — 细线 — 篇数。用一条水平线把区块和上方 Hero 分开，
+   篇数是真实信息，不是装饰 */
+.home-recent-head {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 3rem 0 1.5rem;
+}
+
+.home-recent-head h2 {
+  flex: none;
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+}
+
+.home-recent-head .home-recent-rule {
+  flex: 1 1 auto;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    rgba(var(--color-neutral-900), 0.2),
+    rgba(var(--color-neutral-900), 0)
+  );
+}
+
+html.dark .home-recent-head .home-recent-rule {
+  background: linear-gradient(
+    to right,
+    rgba(var(--color-neutral-100), 0.24),
+    rgba(var(--color-neutral-100), 0)
+  );
+}
+
+.home-recent-count {
+  flex: none;
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+  color: rgba(var(--color-neutral-600), 0.85);
+}
+
+html.dark .home-recent-count {
+  color: rgba(var(--color-neutral-400), 0.9);
+}
+
+/* 卡片网格：加大间距，让实心卡片之间留出呼吸 */
+.home-recent > .grid {
+  gap: 1.25rem;
+}
+
+/* 平板宽度（768–1279）保持两列：主题默认在 768 就切三列，
+   此时每张卡只有约 240px，中文标题会被挤成三四行。
+   1280 起内容区足够宽，再回到三列 */
+@media (min-width: 768px) and (max-width: 1279px) {
+  .home-recent > .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* 卡片本体：从「半透明玻璃」改成近实心底色 + 极细描边。
+   原来的 80% 透明底会让背后的云层透进卡片，文字对比度被拉低 */
+.home-recent .article-link--card {
+  border-radius: 0.875rem;
+  background-color: rgba(255, 255, 255, 0.94);
+  border-color: rgba(var(--color-neutral-900), 0.08);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.6) inset,
+    0 12px 32px -26px rgba(var(--color-neutral-900), 0.5);
+}
+
+html.dark .home-recent .article-link--card {
+  background-color: rgba(15, 23, 42, 0.92);
+  border-color: rgba(var(--color-neutral-400), 0.16);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.04) inset,
+    0 18px 40px -30px rgba(0, 0, 0, 0.9);
+}
+
+/* 特异性会盖过文件开头通用的 .article-link--card:hover，这里重写首页的悬停态 */
+.home-recent .article-link--card:hover {
+  border-color: rgba(var(--color-primary-500), 0.5);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.6) inset,
+    0 24px 44px -28px rgba(var(--color-neutral-900), 0.55),
+    0 0 0 1px rgba(var(--color-primary-500), 0.1);
+}
+
+html.dark .home-recent .article-link--card:hover {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.05) inset,
+    0 26px 50px -28px rgba(0, 0, 0, 0.95),
+    0 0 0 1px rgba(var(--color-primary-500), 0.16);
+}
+
+/* 卡片内边距：收紧底部留白，并去掉主题模板末尾的占位块 */
+.home-recent .article-link--card > .p-4 {
+  padding: 1.25rem 1.25rem 1rem;
+}
+
+.home-recent .article-link--card > .px-6.pt-4.pb-2 {
+  display: none;
+}
+
+/* 标题：18px 半粗。悬停时颜色保持不变，只在文字下方画一条主题蓝细线；
+   整张卡片已是可点区域，位移和描边已经足够提示 */
+.home-recent .article-link--card h2 {
+  font-size: 1.125rem;
+  line-height: 1.55;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: rgb(var(--color-neutral-900));
+}
+
+html.dark .home-recent .article-link--card h2 {
+  color: rgb(var(--color-neutral-100));
+}
+
+.home-recent .article-link--card:hover h2 {
+  text-decoration-line: underline;
+  text-decoration-color: rgba(var(--color-primary-500), 0.85);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.18em;
+  text-decoration-skip-ink: auto;
+}
+
+html.dark .home-recent .article-link--card:hover h2 {
+  text-decoration-color: rgba(var(--color-primary-400), 0.85);
+}
+
+/* 主题给标题链接默认加了 hover:underline，这里关掉，
+   下划线统一交给上面的 h2 规则控制（避免标签链接也被划上） */
+.home-recent .article-link--card a:hover {
+  text-decoration-line: none;
+}
+
+/* 标签：胶囊形 + 主题蓝描边，和元信息里的蓝色分隔点呼应 */
+.home-recent .article-link--card a[href*="/tags/"] > span > span,
+.home-recent .article-link--card a[href*="/categories/"] > span > span {
+  border-radius: 9999px;
+  border-color: rgba(var(--color-primary-500), 0.42);
+  background-color: rgba(var(--color-primary-500), 0.06);
+  color: rgb(var(--color-primary-700));
+  padding: 0.1rem 0.5rem;
+  transition:
+    border-color 0.25s var(--home-ease),
+    background-color 0.25s var(--home-ease),
+    color 0.25s var(--home-ease);
+}
+
+html.dark .home-recent .article-link--card a[href*="/tags/"] > span > span,
+html.dark .home-recent .article-link--card a[href*="/categories/"] > span > span {
+  border-color: rgba(var(--color-primary-400), 0.42);
+  background-color: rgba(var(--color-primary-400), 0.1);
+  color: rgb(var(--color-primary-300));
+}
+
+.home-recent .article-link--card a[href*="/tags/"]:hover > span > span,
+.home-recent .article-link--card a[href*="/categories/"]:hover > span > span {
+  border-color: rgba(var(--color-primary-500), 0.75);
+  background-color: rgba(var(--color-primary-500), 0.14);
+  color: rgb(var(--color-primary-800));
+}
+
+html.dark .home-recent .article-link--card a[href*="/tags/"]:hover > span > span,
+html.dark .home-recent .article-link--card a[href*="/categories/"]:hover > span > span {
+  border-color: rgba(var(--color-primary-300), 0.75);
+  background-color: rgba(var(--color-primary-300), 0.16);
+  color: rgb(var(--color-primary-200));
+}
+
 /* 尊重系统的减少动效偏好：关闭动画，内容直接完整呈现 */
 @media (prefers-reduced-motion: reduce) {
   .home-hero-backdrop,
   .home-hero-avatar,
   .home-hero-title .hero-word,
-  .hero-emoji,
+  .hero-sparkle,
+  .home-hero-bio,
   .home-hero-headline,
   .home-hero-links a,
-  .home-recent h2,
+  .home-recent-head,
   .home-recent .article-link--card {
     animation: none;
+  }
+
+  .home-hero-links a,
+  .home-recent .article-link--card h2,
+  .home-recent .article-link--card a[href*="/tags/"] > span > span,
+  .home-recent .article-link--card a[href*="/categories/"] > span > span {
+    transition: none;
+  }
+
+  .home-hero-links a:hover {
+    transform: none;
   }
 }
 
