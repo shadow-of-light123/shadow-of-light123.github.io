@@ -9,19 +9,19 @@
    注意：若日后修改题词文字，需要重新生成 ma-shan-zheng 子集，
    否则新增的字会回退到 KaiTi */
 @font-face {
-  font-family: "Caveat";
+  font-family: 'Caveat';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url("../fonts/caveat.woff2") format("woff2");
+  src: url('../fonts/caveat.woff2') format('woff2');
 }
 
 @font-face {
-  font-family: "Ma Shan Zheng";
+  font-family: 'Ma Shan Zheng';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url("../fonts/ma-shan-zheng-motto.woff2") format("woff2");
+  src: url('../fonts/ma-shan-zheng-motto.woff2') format('woff2');
 }
 
 /* 文章正文稍微加宽：65ch → 70ch。
@@ -74,10 +74,21 @@
 }
 
 /* 修复移动端正文溢出：长英文串（方法名链、URL、类名等）允许在任意字符处折行。
-   anywhere 参与 min-content 宽度计算，段落/列表/表格/标题不再被长词撑宽；
-   代码块 pre 因 white-space:pre 无断行点，不受影响，仍保持内部横向滚动 */
+   anywhere 参与 min-content 宽度计算，段落/列表不再被长词撑宽；
+   代码块 pre 因 white-space:pre 无断行点，不受影响，仍保持内部横向滚动；
+   表格在下方单独处理，避免单词被拆断 */
 .article-content * {
   overflow-wrap: anywhere;
+}
+
+/* 表格例外：anywhere 会让列的 min-content 收缩到单字符，导致列被压窄后
+   在单词内部断行（如 profile.age 拆成 profile.ag / e）。
+   改用 break-word，整词放不下时才折行，列宽也会按完整单词计算 */
+.article-content table,
+.article-content td,
+.article-content th,
+.article-content table * {
+  overflow-wrap: break-word;
 }
 
 /* ============ 代码块高亮：Cursor 原生 Dark（官方主题 Cursor Dark Anysphere） ============
@@ -418,7 +429,7 @@ html.dark .chroma .gl {
    字号用自定义媒体查询控制 —— Blowfish 的 Tailwind 是预编译的，
    项目模板里新写的 sm:/md: 工具类不会出现在产物里，写了也不生效 */
 .home-hero-title {
-  font-family: "Caveat", "Segoe Print", "Bradley Hand", cursive;
+  font-family: 'Caveat', 'Segoe Print', 'Bradley Hand', cursive;
   font-weight: 400;
   font-style: normal;
   font-size: 2.5rem;
@@ -468,7 +479,8 @@ html.dark .home-hero-avatar {
 
 .home-hero-title .hero-word {
   display: inline-block;
-  animation: hero-word-in 0.45s var(--home-ease) var(--word-delay, 0.3s) backwards;
+  animation: hero-word-in 0.45s var(--home-ease) var(--word-delay, 0.3s)
+    backwards;
 }
 
 /* —— 欢迎图标：名字前的暖色四角星，与第一个词同步淡入，轻轻闪两下后停 ——
@@ -564,7 +576,7 @@ html.dark .home-hero-bio {
 
 /* 题词：毛笔字要有碑帖的体量感，字号比正文大、行高放松 */
 .home-hero-headline {
-  font-family: "Ma Shan Zheng", KaiTi, STKaiti, serif;
+  font-family: 'Ma Shan Zheng', KaiTi, STKaiti, serif;
   font-weight: 400;
   font-size: 1.65rem;
   line-height: 1.5;
@@ -611,7 +623,8 @@ html.dark .home-hero-headline {
     background-color 0.3s var(--home-ease),
     border-color 0.3s var(--home-ease),
     color 0.3s var(--home-ease);
-  animation: home-fade-up 0.45s var(--home-ease) var(--link-delay, 0.72s) backwards;
+  animation: home-fade-up 0.45s var(--home-ease) var(--link-delay, 0.72s)
+    backwards;
 }
 
 html.dark .home-hero-links a {
@@ -822,8 +835,8 @@ html.dark .home-recent .article-link--card:hover h2 {
 }
 
 /* 标签：胶囊形 + 主题蓝描边，和元信息里的蓝色分隔点呼应 */
-.home-recent .article-link--card a[href*="/tags/"] > span > span,
-.home-recent .article-link--card a[href*="/categories/"] > span > span {
+.home-recent .article-link--card a[href*='/tags/'] > span > span,
+.home-recent .article-link--card a[href*='/categories/'] > span > span {
   border-radius: 9999px;
   border-color: rgba(var(--color-primary-500), 0.42);
   background-color: rgba(var(--color-primary-500), 0.06);
@@ -835,22 +848,37 @@ html.dark .home-recent .article-link--card:hover h2 {
     color 0.25s var(--home-ease);
 }
 
-html.dark .home-recent .article-link--card a[href*="/tags/"] > span > span,
-html.dark .home-recent .article-link--card a[href*="/categories/"] > span > span {
+html.dark .home-recent .article-link--card a[href*='/tags/'] > span > span,
+html.dark
+  .home-recent
+  .article-link--card
+  a[href*='/categories/']
+  > span
+  > span {
   border-color: rgba(var(--color-primary-400), 0.42);
   background-color: rgba(var(--color-primary-400), 0.1);
   color: rgb(var(--color-primary-300));
 }
 
-.home-recent .article-link--card a[href*="/tags/"]:hover > span > span,
-.home-recent .article-link--card a[href*="/categories/"]:hover > span > span {
+.home-recent .article-link--card a[href*='/tags/']:hover > span > span,
+.home-recent .article-link--card a[href*='/categories/']:hover > span > span {
   border-color: rgba(var(--color-primary-500), 0.75);
   background-color: rgba(var(--color-primary-500), 0.14);
   color: rgb(var(--color-primary-800));
 }
 
-html.dark .home-recent .article-link--card a[href*="/tags/"]:hover > span > span,
-html.dark .home-recent .article-link--card a[href*="/categories/"]:hover > span > span {
+html.dark
+  .home-recent
+  .article-link--card
+  a[href*='/tags/']:hover
+  > span
+  > span,
+html.dark
+  .home-recent
+  .article-link--card
+  a[href*='/categories/']:hover
+  > span
+  > span {
   border-color: rgba(var(--color-primary-300), 0.75);
   background-color: rgba(var(--color-primary-300), 0.16);
   color: rgb(var(--color-primary-200));
@@ -872,8 +900,8 @@ html.dark .home-recent .article-link--card a[href*="/categories/"]:hover > span 
 
   .home-hero-links a,
   .home-recent .article-link--card h2,
-  .home-recent .article-link--card a[href*="/tags/"] > span > span,
-  .home-recent .article-link--card a[href*="/categories/"] > span > span {
+  .home-recent .article-link--card a[href*='/tags/'] > span > span,
+  .home-recent .article-link--card a[href*='/categories/'] > span > span {
     transition: none;
   }
 
