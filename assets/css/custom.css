@@ -987,6 +987,14 @@ html.dark #waline {
   margin-inline-end: 1em;
 }
 
+/* 头像下的昵称是 <a>，主题给所有 a 设了 word-break: break-word（等价于
+   overflow-wrap: anywhere），会把 "Jason Chen" 拆成 "Jason Che" + "n"。
+   这里改回按单词边界换行，只有单个词本身超过列宽时才拆开 */
+#waline .wl-login-info .wl-login-nick {
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+
 #waline .wl-panel:focus-within {
   border-color: rgb(var(--color-neutral-400));
 }
