@@ -1,0 +1,7 @@
+{{- /* 单篇文章页浏览量：数字由 Waline 的 pageview 功能自动填充。
+       挂载见 layouts/partials/comments.html 中 Waline.init 的 pageview 选项。 */ -}}
+<span class="waline-meta-views">
+  <span class="inline-block align-text-bottom">{{ partial "icon.html" "eye" }}</span>
+  <span class="waline-pageview-count" data-path="{{ .RelPermalink }}">–</span>
+  <span class="waline-meta-label">{{ i18n "waline.viewsLabel" }}</span>
+</span>

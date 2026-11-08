@@ -1,3 +1,9 @@
 # Site-level translation overrides (takes precedence over the theme's i18n/en.yaml)
 recent:
   articleCount: "{{ .Count }} posts"
+
+waline:
+  viewsLabel: 'views'
+  likesLabel: 'likes'
+  likeTitle: 'Like this article'
+  unlikeTitle: 'Remove like'

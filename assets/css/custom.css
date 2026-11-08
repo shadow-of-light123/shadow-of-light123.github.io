@@ -1238,3 +1238,78 @@ html.dark #waline .wl-gif-popup {
     transform: none;
   }
 }
+
+
+/* ============ 文章 meta 行的浏览量 / 点赞 ============
+   数字分别由 Waline 的 pageview（comments.html 的 Waline.init）与点赞脚本填充。 */
+
+.waline-meta-views,
+.waline-likes {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  white-space: nowrap;
+}
+
+.waline-meta-label {
+  margin-inline-start: 0.05em;
+}
+
+/* 数字等宽，加载完成后不抖动 */
+.waline-pageview-count,
+.waline-like-count {
+  font-variant-numeric: tabular-nums;
+}
+
+/* 点赞按钮：去掉原生按钮外观，只留图标 + 数字 */
+.waline-like-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  line-height: inherit;
+  cursor: pointer;
+  /* 心形固定用红色，不跟随主题主色（blowfish 主色是蓝色） */
+  --waline-like-color: #ef4444;
+}
+
+html.dark .waline-like-button {
+  --waline-like-color: #f87171;
+}
+
+.waline-like-button .waline-like-heart {
+  width: 1em;
+  height: 1em;
+  color: inherit;
+  opacity: 0.85;
+  transition: color 0.15s ease, opacity 0.15s ease;
+}
+
+.waline-like-button:hover .waline-like-heart,
+.waline-like-button:focus-visible .waline-like-heart,
+.waline-like-button.is-liked .waline-like-heart {
+  color: var(--waline-like-color);
+  opacity: 1;
+}
+
+.waline-like-button.is-busy {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* 未点赞时只显示空心，点赞后切到实心 */
+.waline-like-heart--active {
+  display: none;
+}
+
+.waline-like-button.is-liked .waline-like-heart--active {
+  display: inline-block;
+}
+
+.waline-like-button.is-liked .waline-like-heart--empty {
+  display: none;
+}

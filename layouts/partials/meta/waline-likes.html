@@ -1,0 +1,25 @@
+{{- /* 单篇文章页点赞：复用 Waline 的 reaction0 计数（后端 Vercel + Neon），
+       交互逻辑见 layouts/partials/comments.html 末尾的点赞脚本。 */ -}}
+<span class="waline-likes">
+  <button
+    type="button"
+    id="waline-like-button"
+    class="waline-like-button"
+    data-path="{{ .RelPermalink }}"
+    data-like-title="{{ i18n "waline.likeTitle" }}"
+    data-unlike-title="{{ i18n "waline.unlikeTitle" }}"
+    aria-pressed="false"
+    title="{{ i18n "waline.likeTitle" }}"
+  >
+    <span
+      class="waline-like-heart waline-like-heart--empty inline-block align-text-bottom"
+      >{{ partial "icon.html" "heart-empty" }}</span
+    >
+    <span
+      class="waline-like-heart waline-like-heart--active inline-block align-text-bottom"
+      >{{ partial "icon.html" "heart" }}</span
+    >
+    <span class="waline-like-count">–</span>
+  </button>
+  <span class="waline-meta-label">{{ i18n "waline.likesLabel" }}</span>
+</span>

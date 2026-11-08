@@ -33,7 +33,94 @@ zh-CN，英文页 en） 视觉样式（配色、圆角、按钮、列表）在 a
       lang: lang,
       noRss: true, // 隐藏底部“订阅评论”链接和评论旁的“订阅回复”按钮
       meta: [], // 匿名评论不显示昵称/邮箱/网址输入框，样式与登录状态一致
+      pageview: true, // 文章浏览量：初始化时自动 +1，并填充标题下的 .waline-pageview-count
       locale: lang === 'zh-CN' ? zh : en,
+    })
+  })()
+</script>
+
+<script>
+  ;(function () {
+    // 文章点赞：复用 Waline 的 reaction0 计数；同一浏览器用 localStorage 去重。
+    // Waline 服务端没有鉴权，点赞数只作弱统计。
+    var likeButton = document.getElementById('waline-like-button')
+    if (!likeButton) return
+
+    var serverURL = 'https://waline.chenjingyi.top'
+    var path = likeButton.getAttribute('data-path')
+    var countEl = likeButton.querySelector('.waline-like-count')
+    var likeTitle = likeButton.getAttribute('data-like-title')
+    var unlikeTitle = likeButton.getAttribute('data-unlike-title')
+    var storageKey = 'waline-like:' + path
+    var lang = document.documentElement.lang || 'zh-CN'
+
+    var liked = false
+    try {
+      liked = window.localStorage.getItem(storageKey) === '1'
+    } catch (e) {}
+
+    var busy = false
+    var touched = false
+
+    var setLiked = function (value) {
+      liked = value
+      likeButton.classList.toggle('is-liked', liked)
+      likeButton.setAttribute('aria-pressed', liked ? 'true' : 'false')
+      likeButton.setAttribute('title', liked ? unlikeTitle : likeTitle)
+      try {
+        if (liked) window.localStorage.setItem(storageKey, '1')
+        else window.localStorage.removeItem(storageKey)
+      } catch (e) {}
+    }
+
+    var render = function (count) {
+      if (typeof count === 'number') countEl.textContent = count.toLocaleString(lang)
+    }
+
+    var request = function (url, options) {
+      return fetch(url, options).then(function (res) {
+        return res.json()
+      })
+    }
+
+    // 读取当前计数：本地记录与线上不一致时以线上为准
+    request(
+      serverURL + '/api/article?path=' + encodeURIComponent(path) + '&type=reaction0',
+    )
+      .then(function (res) {
+        var data = res && res.data && res.data[0]
+        if (!data || typeof data.reaction0 !== 'number') return
+        // 用户已经点过赞（请求可能比初始读取先返回）时，忽略过期的初始计数
+        if (touched) return
+        if (data.reaction0 === 0 && liked) setLiked(false)
+        render(data.reaction0)
+        likeButton.classList.toggle('is-liked', liked)
+        likeButton.setAttribute('aria-pressed', liked ? 'true' : 'false')
+        likeButton.setAttribute('title', liked ? unlikeTitle : likeTitle)
+      })
+      .catch(function () {})
+
+    likeButton.addEventListener('click', function () {
+      if (busy) return
+      busy = true
+      touched = true
+      likeButton.classList.add('is-busy')
+      request(serverURL + '/api/article', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ path: path, type: 'reaction0', action: liked ? 'desc' : 'inc' }),
+      })
+        .then(function (res) {
+          var data = res && res.data && res.data[0]
+          if (!data || typeof data.reaction0 !== 'number') return
+          setLiked(!liked)
+          render(data.reaction0)
+        })
+        .catch(function () {})
+        .then(function () {
+          busy = false
+          likeButton.classList.remove('is-busy')
+        })
     })
   })()
 </script>

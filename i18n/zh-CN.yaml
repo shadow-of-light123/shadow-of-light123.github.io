@@ -4,3 +4,9 @@ global:
 
 recent:
   articleCount: "{{ .Count }} 篇"
+
+waline:
+  viewsLabel: '次浏览'
+  likesLabel: '个赞'
+  likeTitle: '点赞'
+  unlikeTitle: '取消点赞'
